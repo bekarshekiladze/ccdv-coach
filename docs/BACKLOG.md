@@ -1,0 +1,15 @@
+# Backlog
+
+Work that didn't fit its day, plus project items. Weekend catch-up comes from here. Remove items when they're done.
+
+## Project
+- [ ] Record the exam date in `CLAUDE.md` → Progress.
+- [ ] If days keep running well over 3 hours, decide: stretch the schedule, or move the app blocks to weekends.
+
+## Spilled over from a day
+_(none yet)_
+
+## After the course (ROADMAP levels 2–3)
+- [ ] The Labs page in the app (run lab variants from the UI)
+- [ ] Polish the Drills page and the replay demo
+- [ ] Exercise mode for others, the Claude Code plugin, the write-ups (only after the exam)
