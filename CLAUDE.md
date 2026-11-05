@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 Exam-prep project for **CCDV-F (Claude Certified Developer – Foundations)**, run as two tracks in one repo:
-- **Labs** (`labs/`): one script per plan step, for predict & break.
+- **Labs** (`labs/`): a folder per plan step and a script per sub-step, for predict & break.
 - **Study Coach** (`src/`): a Next.js app that grows with the course and becomes the capstone covering all 8 exam domains.
 
 Restarted from Day 1 on 2026-11-05. The first run (Days 1–5, scripts only) is archived in `../notes-agent`.
@@ -42,9 +42,11 @@ Restarted from Day 1 on 2026-11-05. The first run (Days 1–5, scripts only) is 
 ## Conventions
 - Next.js 16 (App Router, `src/`, Turbopack), React 19, TypeScript, Tailwind 4, ESLint. Before writing Next.js code, check the bundled docs in `node_modules/next/dist/docs/` (see AGENTS.md).
 - App: `npm run dev` (http://localhost:3000), `npm run build`, `npm run lint`. Imports inside `src/` use `@/`.
-- Labs: `npx tsx labs/<file>.ts`, named after the plan's steps (`labs/01-stream.ts`, `labs/02-tools.ts`, …).
-  - `labs/package.json` (`{ "type": "module" }`) makes only the labs ESM, so top-level await works.
-  - Labs load `.env` with `import "dotenv/config"`.
+- Labs: a folder per plan step, a file per sub-step (`labs/01-messages/1a-plain.ts`). Add a folder when the course reaches its step. Naming rules: `docs/DECISIONS.md` #17.
+  - Run from the repo root: `npx tsx labs/01-messages/1b-stream.ts`.
+  - Shared files stay in `labs/` (`client.ts`, `check-key.ts`, later `data/`), so step files import `../client`.
+  - `labs/package.json` (`{ "type": "module" }`) makes only the labs ESM, subfolders included, so top-level await works.
+  - Labs load `.env` with `import "dotenv/config"`, which looks in the current folder: one more reason to run from the repo root.
   - Labs never import from `src/`, and `src/` never imports from `labs/`.
 - `src/core/` is framework-free: no `next`, `react` or `server-only` imports, and no dotenv (entry points load env). Next.js code reaches it through `src/server/`. Details: `docs/ARCHITECTURE.md`.
 - `.env` holds `ANTHROPIC_API_KEY`. Next loads it for server code; the labs read it with dotenv. It's gitignored (`.env*`). Never print, log or commit it, and never use a `NEXT_PUBLIC_` prefix.

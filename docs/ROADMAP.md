@@ -5,7 +5,7 @@ _Direction agreed 2026-11-04. Since 2026-11-05 both tracks live in this repo, re
 ## Two tracks
 | Track | What | Why |
 |---|---|---|
-| Labs | one script per plan step in `labs/` | one concept at a time and fast predict & break, which is how the exam asks |
+| Labs | a folder per plan step in `labs/`, a script per sub-step | one concept at a time and fast predict & break, which is how the exam asks |
 | Web app | **Study Coach**, a Next.js app | motivation, real-world integration practice, and the capstone covering all 8 domains |
 
 Rules:
@@ -160,7 +160,7 @@ The layout is a sidebar, the main view, and an **Inspector** panel. The core ide
 
 **A lab page:** where the hands-on "predict & break" work happens.
 ```
-┌ Lab 07 · Structured output ──────────── Course 2 › Prompting Craft ┐
+┌ Lab 3b · Structured output ──────────── Course 2 › Prompting Craft ┐
 │ Variant  ( ) prompt only   (•) native JSON   ( ) forced tool       │
 │ Break    [x] drop the "no prose" rule   [ ] add a prefill          │
 │ Predict  Still valid: the schema forces the shape.                 │
@@ -172,7 +172,7 @@ The layout is a sidebar, the main view, and an **Inspector** panel. The core ide
 │   Rule: native JSON outputs guarantee the shape; format rules      │
 │         in the prompt become redundant.                            │
 │   seen: dropping the rule changed nothing (run #14, Nov 2026)      │
-│ [View code: labs/07-structured.ts]                                 │
+│ [View code: labs/03-structured/3b-native-json.ts]                  │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
