@@ -9,9 +9,9 @@ _Restarted from Day 1 on 2026-11-05._ Each day follows the plan doc's Daily agen
 
 ## Day 1: Foundations, first calls, first streaming chat
 Course 1, MSO Foundations: all 6 sections (~59 min)
-- [ ] **5 min · Preview:** the plan's Setup and Step 1; the structure in `docs/ARCHITECTURE.md`
-- [ ] **60 min · Read:** Orientation → How LLMs Behave → Models & Reasoning → Prompting Modes → Technical Substrate → Wrap-up (incl. the quiz)
-- [ ] **10 min · Setup:**
+- [x] **5 min · Preview:** the plan's Setup and Step 1; the structure in `docs/ARCHITECTURE.md`
+- [x] **60 min · Read:** Orientation → How LLMs Behave → Models & Reasoning → Prompting Modes → Technical Substrate → Wrap-up (incl. the quiz)
+- [x] **10 min · Setup:**
   - copy your key into `.env`, and confirm `git check-ignore .env` prints `.env`
   - `npm run dev` shows the starter page
   - write `labs/client.ts` and `labs/check-key.ts`, and run the check
