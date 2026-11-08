@@ -73,3 +73,8 @@ Refines #1. Example: `labs/01-messages/1a-plain.ts`.
 - **Why:** a step's files stay together, each file holds one concept so a run tests only that, and the step number in the file name keeps editor tabs and Ctrl+P clear.
 - **Cost:** one more folder level and longer run commands. Run from the repo root, because dotenv looks for `.env` in the current folder.
 - The plan's Guide keeps one flat file per step (`src/01-stream.ts`, where 1b replaces 1a's call). This layout is a repo convention, not the plan's.
+
+### 18. A `day-N` branch per day, merged with `--no-ff` (decided, 2026-11-08)
+Refines #2. Each day gets a short-lived `day-N` branch off `master`. At the end of the day it merges with `git merge --no-ff day-N` and is deleted with `git branch -d`.
+- **Why `--no-ff`:** the merge commit groups each day's commits, so `git log --graph` shows one bubble per day, and a whole day can be reverted with `git revert -m 1 <merge>`.
+- **Cost:** one extra merge commit per day. The branch is `master` (no remote yet), so nothing is pushed.

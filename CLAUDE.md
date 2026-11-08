@@ -38,6 +38,7 @@ Restarted from Day 1 on 2026-11-05. The first run (Days 1–5, scripts only) is 
 - After each day, offer a short quiz on the user's own code.
 - The app block is time-boxed to 45 min. What doesn't fit goes to `docs/BACKLOG.md`, never into the next day's course time.
 - Commit at the end of every day: uncommitted files were lost in the first run.
+- Branches: a `day-N` branch per day. End of day: commit, then `git switch master`, `git merge --no-ff day-N`, `git branch -d day-N`. Start of day: `git switch -c day-N`. Rationale: `docs/DECISIONS.md` #2 and #18.
 
 ## Conventions
 - Next.js 16 (App Router, `src/`, Turbopack), React 19, TypeScript, Tailwind 4, ESLint. Before writing Next.js code, check the bundled docs in `node_modules/next/dist/docs/` (see AGENTS.md).

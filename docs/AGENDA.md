@@ -15,13 +15,13 @@ Course 1, MSO Foundations: all 6 sections (~59 min)
   - copy your key into `.env`, and confirm `git check-ignore .env` prints `.env`
   - `npm run dev` shows the starter page
   - write `labs/client.ts` and `labs/check-key.ts`, and run the check
-- [ ] **40 min · Lab, Step 1a–1d** (in `labs/01-messages/`):
+- [x] **40 min · Lab, Step 1a–1d** (in `labs/01-messages/`):
   - `1a-plain.ts`: a plain call (content blocks, `stop_reason`, `usage`)
   - `1b-stream.ts`: streaming with `.on("text")` and `finalMessage()`
   - `1c-chat.ts`: a REPL that keeps the history
   - 1d, errors, inside `1c-chat.ts`: a wrong model name, `max_tokens: 5`
-- [ ] **15 min · Lesson extras** (in `labs/01-messages/`): the same prompt 5× (`extra-repeat.ts`); zero/one/multi-shot (`extra-shots.ts`); one raw `fetch` call (`extra-fetch.ts`)
-- [ ] **45 min · App, the first streaming chat:**
+- [x] **15 min · Lesson extras** (in `labs/01-messages/`): the same prompt 5× (`extra-repeats.ts`); zero/one/multi-shot (`extra-shots.ts`); one raw `fetch` call (`extra-fetch.ts`)
+- [x] **45 min · App, the first streaming chat:**
   - `src/core/llm/client.ts`: the client and `MODEL`. No Next.js imports and no dotenv (Next loads `.env` itself).
   - `src/server/index.ts`: `import "server-only"`, then re-export what the routes need.
   - `src/app/api/chat/route.ts`: `POST` → `client.messages.stream()` → server-sent events: `text` deltas, then `done` (with `stop_reason` and `usage`) or `error` (with the status).
