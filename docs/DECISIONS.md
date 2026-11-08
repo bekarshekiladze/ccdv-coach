@@ -63,3 +63,18 @@ Writing the rules yourself is part of learning, so this run starts empty. The fi
 
 ### 16. Scaffold choices (decided, 2026-11-05)
 `create-next-app` 16.4.5 with TypeScript, ESLint, Tailwind, the App Router, a `src/` directory, the `@/*` alias and npm. `.env` is shared by Next (server code) and the labs (dotenv).
+
+### 17. Labs: a folder per plan step, a file per sub-step (decided by the user, 2026-11-05)
+Refines #1. Example: `labs/01-messages/1a-plain.ts`.
+- **Folders** follow the plan's steps and are added when the course reaches them: `01-messages`, `02-tools`, `03-structured`, `04-caching`, `05-mcp`, `06-security`, `07-agents`, `08-context`, `09-evals`, `10-add-ons`.
+- **Files** start with the sub-step they cover: `1b-stream.ts`, or `2a-2b-loop.ts` when one file covers two. A file for a whole step, or for one of Step 10's unlettered items, uses the bare number: `5-mcp-server.ts`, `10-thinking.ts`. Lesson extras are `extra-<name>.ts`.
+- A sub-step that only extends another file stays in it: 1d's error handling lives in `1c-chat.ts`.
+- **Shared files** stay in `labs/`: `client.ts`, `check-key.ts`, `package.json` (ESM for every subfolder), and later `data/`. Step files import `../client`.
+- **Why:** a step's files stay together, each file holds one concept so a run tests only that, and the step number in the file name keeps editor tabs and Ctrl+P clear.
+- **Cost:** one more folder level and longer run commands. Run from the repo root, because dotenv looks for `.env` in the current folder.
+- The plan's Guide keeps one flat file per step (`src/01-stream.ts`, where 1b replaces 1a's call). This layout is a repo convention, not the plan's.
+
+### 18. A `day-N` branch per day, merged with `--no-ff` (decided, 2026-11-08)
+Refines #2. Each day gets a short-lived `day-N` branch off `master`. At the end of the day it merges with `git merge --no-ff day-N` and is deleted with `git branch -d`.
+- **Why `--no-ff`:** the merge commit groups each day's commits, so `git log --graph` shows one bubble per day, and a whole day can be reverted with `git revert -m 1 <merge>`.
+- **Cost:** one extra merge commit per day. The branch is `master` (no remote yet), so nothing is pushed.

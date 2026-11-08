@@ -34,7 +34,7 @@ ccdv-coach/
 │     ├─ multimodal/           image/PDF → content blocks (base64, URL, file_id)
 │     ├─ batch/                Message Batches (nightly deck generation)
 │     └─ mcp/                  createNotesServer(): tools, resources, prompts
-├─ labs/                       lesson experiments, one per lesson (predict & break)
+├─ labs/                       lesson experiments (predict & break): a folder per plan step, a file per sub-step
 ├─ evals/                      datasets, graders (code + LLM judge), runner
 ├─ bin/                        mcp-stdio.ts, nightly-batch.ts
 ├─ docs/                       requirements, trust boundaries, platform table, decisions
@@ -135,7 +135,7 @@ FSD has no place for the Claude core.
   - A function has a maximum duration, so keep agent loops bounded. Long tasks go to Batch, a background job or Managed Agents.
   - The filesystem doesn't persist, so memory and notes need a DB once deployed: a SQLite file locally, a hosted DB after that.
 - **Per-user data:** a simple user picker (a cookie with a userId) is enough for scoping. Real login is Next.js practice, not exam practice.
-- **Top-level await in labs** (the first run's Day 1 error): `labs/package.json` holds `{ "type": "module" }`, which makes only the labs ESM. Checked on 2026-11-05: tsx runs it, and tsc accepts it under Next's tsconfig.
+- **Top-level await in labs** (the first run's Day 1 error): `labs/package.json` holds `{ "type": "module" }`, which makes only the labs ESM, subfolders included. Checked on 2026-11-05: tsx runs it (also from `labs/01-messages/`), and tsc accepts it under Next's tsconfig.
 - **Claude Code memory is tied to the folder you start it from**, so keep starting it from the repo root.
 
 ## Setup (done 2026-11-05)
