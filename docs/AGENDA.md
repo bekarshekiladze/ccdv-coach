@@ -28,11 +28,11 @@ Course 1, MSO Foundations: all 6 sections (~59 min)
   - `src/app/(study)/coach/page.tsx` (URL `/coach`): a client component that reads the stream with `fetch` and `getReader()` and shows the text live. **Inspector v0:** the model, `stop_reason`, input and output tokens.
   - Stretch: multi-turn with server-side history (a `Map` keyed by conversation id). Push the assistant turn only after the stream ends.
   - Read first: `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md` and `node_modules/next/dist/docs/01-app/02-guides/streaming.md`.
-- [ ] **10 min · Predict & break:**
+- [x] **10 min · Predict & break:**
   - `max_tokens: 5`: what does the UI show?
   - a wrong model name: which status, and what should the user see?
   - stop the dev server mid-answer: is the half answer saved?
-- [ ] **5 min · Check:** rules into `LEARNING.md`, Progress, commit
+- [x] **5 min · Check:** rules into `LEARNING.md`, Progress, commit
 
 ## Day 2: Prompting craft and extended thinking
 Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
@@ -46,7 +46,7 @@ Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
   - `src/core/schemas/flashcard.ts`: the Zod deck schema, with the JSON Schema generated from it.
   - Practice page v0 (`/practice`): "make 5 cards on a topic" via native JSON output, showing each check (`stop_reason` ✓, parse ✓, Zod ✓).
   - Coach: an "explain with thinking" toggle (adaptive thinking + effort). **Inspector:** the thinking summary and its tokens.
-- [ ] **10 min · Predict & break:** 3a vs 3b, 10× each; a strict Zod rule on 3b; a thinking budget above `max_tokens`
+- [ ] **10 min · Predict & break:** 3a vs 3b, 10× each; a strict Zod rule on 3b; `budget_tokens` on Haiku 5.5 (the plan's "budget above `max_tokens`" predates adaptive thinking); thinking on + a tiny `max_tokens`
 - [ ] **10 min · Check**
 
 ## Day 3: Tools, schemas and streaming
