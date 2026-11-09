@@ -40,7 +40,7 @@ Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
 - [x] **40 min · Read:** Orientation → Prompting Craft → Extended Thinking (with the Watch Out notes and Checkpoints)
 - [x] **30 min · Lab, Step 3a:** `labs/03-structured/3a-prompt-json.ts`, prompt-only JSON + Zod (XML tags, one example)
 - [x] **30 min · Lab, Step 3b:** `labs/03-structured/3b-native-json.ts`, native JSON with `output_config.format`, still checked with Zod
-- [ ] **20 min · Lab, Step 10 thinking:** `labs/10-add-ons/10-thinking.ts`, with vs without thinking, then low vs high effort
+- [x] **20 min · Lab, Step 10 thinking:** `labs/10-add-ons/10-thinking.ts`, with vs without thinking, then low vs high effort
 - [ ] **45 min · App, prompts and flashcards:**
   - `src/core/prompts/v1/coach.md` with `<context>`, `<rules>` and `<example>`, plus a small loader. **Inspector:** the prompt version.
   - `src/core/schemas/flashcard.ts`: the Zod deck schema, with the JSON Schema generated from it.
