@@ -36,10 +36,10 @@ Course 1, MSO Foundations: all 6 sections (~59 min)
 
 ## Day 2: Prompting craft and extended thinking
 Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
-- [ ] **5 min · Preview:** Steps 3a and 3b; the thinking items in Step 10
-- [ ] **40 min · Read:** Orientation → Prompting Craft → Extended Thinking (with the Watch Out notes and Checkpoints)
-- [ ] **30 min · Lab, Step 3a:** `labs/03-structured/3a-prompt-json.ts`, prompt-only JSON + Zod (XML tags, one example)
-- [ ] **30 min · Lab, Step 3b:** `labs/03-structured/3b-native-json.ts`, native JSON with `output_config.format`, still checked with Zod
+- [x] **5 min · Preview:** Steps 3a and 3b; the thinking items in Step 10
+- [x] **40 min · Read:** Orientation → Prompting Craft → Extended Thinking (with the Watch Out notes and Checkpoints)
+- [x] **30 min · Lab, Step 3a:** `labs/03-structured/3a-prompt-json.ts`, prompt-only JSON + Zod (XML tags, one example)
+- [x] **30 min · Lab, Step 3b:** `labs/03-structured/3b-native-json.ts`, native JSON with `output_config.format`, still checked with Zod
 - [ ] **20 min · Lab, Step 10 thinking:** `labs/10-add-ons/10-thinking.ts`, with vs without thinking, then low vs high effort
 - [ ] **45 min · App, prompts and flashcards:**
   - `src/core/prompts/v1/coach.md` with `<context>`, `<rules>` and `<example>`, plus a small loader. **Inspector:** the prompt version.
