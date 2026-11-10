@@ -9,9 +9,9 @@ Decision rules ("use X when…, not Y") from each day of this run. Scenario ques
 
 ### Messages API
 
-- Rule: find the text block in `content` (`find(b => b.tyupe === "text")`), not `content[0].text`. `content` is a list of blocks.
+- Rule: find the text block in `content` (`find(b => b.type === "text")`), not `content[0].text`. `content` is a list of blocks.
 - Rule: check `stop_reason` after every call. Hitting `max_tokens` is a 200 with a cut-off answer, not an error.
-- Rule: the API is stateless, so resent the whole history every turn. If a call fails, pop the user turn you just pushed.
+- Rule: the API is stateless, so resend the whole history every turn. If a call fails, pop the user turn you just pushed.
 
 ### Sampling and prompting
 
@@ -50,3 +50,9 @@ Decision rules ("use X when…, not Y") from each day of this run. Scenario ques
   seen: claude-haiku-5-5, 2026-11-09, 3b: a thinking block was still in `res.content`.
 - Rule: expect extra latency on the first call with a new schema (it gets compiled).
   seen: claude-haiku-5-5, 2026-11-09, 3b: the first call was around 25% slower than the next ones; times without `output_config` were generally faster than with it.
+
+### Structured output in the app (`/practice`)
+
+- Rule: with native JSON, treat Zod length/enum limits as hints the model reads (they become description text), so the model usually meets them instead of Zod catching them. Use `.refine` (never sent to the model) or a check after the call for rules the model must not see or game.
+  seen: claude-haiku-5-5, 2026-11-10, `/practice` with `question` at `.min(500)`: stop_reason ✓ · parse ✓ · Zod ✓, and the questions grew into long word problems. In 3a (no schema sent) the same rule failed Zod.
+  seen: SDK 1.4.0, 2026-11-10, local converter check (no API call): `.min(500)` → description `"{minLength: 500}"`; a `.refine` doesn't appear in the schema at all.

@@ -1,6 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { Deck, prompt, systemPrompt } from "./flashcard";
+import { Deck, DeckResponse, prompt, systemPrompt } from "./flashcard";
 import { client, MODEL } from "../client";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+
+const NATIVE = process.argv.includes("--native");
 
 type Outcome = "ok" | "parse" | "zod" | "cut";
 
@@ -16,8 +19,11 @@ const runOnce = async (): Promise<{
   const res = await client.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    system: systemPrompt,
+    system: NATIVE ? undefined : systemPrompt,
     messages: conversation,
+    output_config: NATIVE
+      ? { format: zodOutputFormat(DeckResponse) }
+      : undefined,
   });
 
   const raw = res.content.find((b) => b.type === "text")?.text ?? "";
@@ -42,7 +48,10 @@ const runOnce = async (): Promise<{
     };
   }
 
-  const result = Deck.safeParse(parsed);
+  const result = NATIVE
+    ? DeckResponse.safeParse(parsed)
+    : Deck.safeParse(parsed);
+    
   if (!result.success) {
     return {
       outcome: "zod",

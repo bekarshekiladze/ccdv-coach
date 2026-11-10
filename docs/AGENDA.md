@@ -41,13 +41,13 @@ Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
 - [x] **30 min · Lab, Step 3a:** `labs/03-structured/3a-prompt-json.ts`, prompt-only JSON + Zod (XML tags, one example)
 - [x] **30 min · Lab, Step 3b:** `labs/03-structured/3b-native-json.ts`, native JSON with `output_config.format`, still checked with Zod
 - [x] **20 min · Lab, Step 10 thinking:** `labs/10-add-ons/10-thinking.ts`, with vs without thinking, then low vs high effort
-- [ ] **45 min · App, prompts and flashcards:**
+- [x] **45 min · App, prompts and flashcards:**
   - `src/core/prompts/v1/coach.md` with `<context>`, `<rules>` and `<example>`, plus a small loader. **Inspector:** the prompt version.
   - `src/core/schemas/flashcard.ts`: the Zod deck schema, with the JSON Schema generated from it.
   - Practice page v0 (`/practice`): "make 5 cards on a topic" via native JSON output, showing each check (`stop_reason` ✓, parse ✓, Zod ✓).
   - Coach: an "explain with thinking" toggle (adaptive thinking + effort). **Inspector:** the thinking summary and its tokens.
-- [ ] **10 min · Predict & break:** 3a vs 3b, 10× each; a strict Zod rule on 3b; `budget_tokens` on Haiku 5.5 (the plan's "budget above `max_tokens`" predates adaptive thinking); thinking on + a tiny `max_tokens`
-- [ ] **10 min · Check**
+- [x] **10 min · Predict & break:** 3a vs 3b, 10× each; a strict Zod rule on 3b; `budget_tokens` on Haiku 5.5 (the plan's "budget above `max_tokens`" predates adaptive thinking); thinking on + a tiny `max_tokens`
+- [x] **10 min · Check**
 
 ## Day 3: Tools, schemas and streaming
 Course 2: Tool-use and Schema Design, Streaming Responses (~45 min)

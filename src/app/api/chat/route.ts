@@ -1,13 +1,25 @@
-import { APIError, client, MODEL } from "@/server";
+import { APIError, client, loadPrompt, MODEL } from "@/server";
 
 // - Return: new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } }).
 // - Imports come from @/server, never straight from core.
 
 export async function POST(req: Request) {
-  const { message } = await req.json().catch(() => ({}));
+  const { message, think } = await req.json().catch(() => ({}));
   if (typeof message !== "string" || message.trim() === "") {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
+
+  // Load before streaming: a missing prompt is a server bug, so let it fail as a plain 500.
+  const prompt = loadPrompt("coach");
+  if (!prompt.text) {
+    return Response.json({ error: "Prompt not found" }, { status: 500 });
+  }
+  const isThinkingEnabled = think === true;
+  const thinking = isThinkingEnabled
+    ? ({ type: "adaptive", display: "summarized" } as const)
+    : ({ type: "disabled" } as const);
+
+  const effort = isThinkingEnabled ? "high" : "medium";
 
   const encoder = new TextEncoder();
 
@@ -23,13 +35,20 @@ export async function POST(req: Request) {
       try {
         const claude = client.messages.stream({
           model: MODEL,
-          max_tokens: 1024,
+          max_tokens: isThinkingEnabled ? 8000 : 2048,
+          system: prompt.text,
+          thinking,
+          output_config: { effort },
           messages: [{ role: "user", content: message }],
         });
 
         // Pass each piece of text on to the browser as it arrives.
         claude.on("text", (delta) => {
           send("text", { delta });
+        });
+
+        claude.on("thinking", (delta) => {
+          send("thinking", { delta });
         });
 
         //  Wait for the end, then send the Inspector data.
@@ -39,6 +58,12 @@ export async function POST(req: Request) {
           model: final.model,
           stop_reason: final.stop_reason,
           usage: final.usage,
+          prompt_version: prompt.id,
+          thinking_mode: isThinkingEnabled
+            ? "adaptive · high"
+            : "disabled · medium",
+          thinking_tokens:
+            final.usage.output_tokens_details?.thinking_tokens ?? 0,
         });
       } catch (error) {
         // The 200 is already sent, so the error travels as an event.
@@ -64,11 +89,11 @@ export async function POST(req: Request) {
 }
 
 // Predict & break
-// 1. Set max_tokens: 5 in route.ts. What text appears? What does the Inspector show for stop_reason and output tokens? Does the stream end with done or error? 
+// 1. Set max_tokens: 5 in route.ts. What text appears? What does the Inspector show for stop_reason and output tokens? Does the stream end with done or error?
 // - it returned the answer what fits within 5 tokens. The Inspector shows stop_reason as "max_tokens" and output tokens as 5. The stream ends with "done".
 
-// 2. Use a wrong model name (e.g. claude-nope). What is the HTTP status in DevTools → Network? Which status ends up inside the error event? Which code path in the page shows it: the !res.ok branch or handleEvent? 
+// 2. Use a wrong model name (e.g. claude-nope). What is the HTTP status in DevTools → Network? Which status ends up inside the error event? Which code path in the page shows it: the !res.ok branch or handleEvent?
 // - http status is still 200. in error event ends up with status 404. The handleEvent would handle this error, through the "error" event branch.
 
-// 3. Stop the dev server mid-answer (Ctrl+C while it's streaming; use a long prompt so you have time). What happens to the half answer on screen? Does an error appear, and which part of the page code catches it? Is anything saved? 
+// 3. Stop the dev server mid-answer (Ctrl+C while it's streaming; use a long prompt so you have time). What happens to the half answer on screen? Does an error appear, and which part of the page code catches it? Is anything saved?
 // - The first half is shown on the screen. appears "network error" red error text. it would be catched by trycatch block in page.tsx, where reader tries to read from the stream and fails. Nothing is saved in the Inspector since the "done" event never arrives.

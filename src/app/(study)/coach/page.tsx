@@ -3,7 +3,14 @@
 import { useState } from "react";
 
 type Usage = { input_tokens: number; output_tokens: number };
-type DoneInfo = { model: string; stop_reason: string | null; usage: Usage };
+type DoneInfo = {
+  model: string;
+  prompt_version: string;
+  stop_reason: string | null;
+  usage: Usage;
+  thinking_mode: string;
+  thinking_tokens: number;
+};
 
 const CoachPage = () => {
   const [input, setInput] = useState(""); // what's typed in the box
@@ -11,6 +18,8 @@ const CoachPage = () => {
   const [info, setInfo] = useState<DoneInfo | null>(null); // Inspector data, filled by "done"
   const [error, setError] = useState<string | null>(null); // filled by "error" or a failed fetch
   const [loading, setLoading] = useState(false);
+  const [think, setThink] = useState(false);
+  const [thinkingText, setThinkingText] = useState(""); // the thinking summary so far
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +27,7 @@ const CoachPage = () => {
     setInfo(null);
     setError(null);
     setLoading(true);
+    setThinkingText("");
 
     try {
       const res = await fetch("/api/chat", {
@@ -25,7 +35,7 @@ const CoachPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: input, think }),
       });
 
       if (!res.ok) {
@@ -69,6 +79,9 @@ const CoachPage = () => {
     if (event === "text") {
       const { delta } = data as { delta: string };
       setAnswer((prev) => prev + delta);
+    } else if (event === "thinking") {
+      const { delta } = data as { delta: string };
+      setThinkingText((prev) => prev + delta);
     } else if (event === "done") {
       setInfo(data as DoneInfo);
     } else if (event === "error") {
@@ -103,19 +116,36 @@ const CoachPage = () => {
           className="flex-1 px-3 py-2 border rounded"
           placeholder="Ask something…"
         />
+        <label className="flex items-center gap-1 text-sm">
+          <input
+            type="checkbox"
+            checked={think}
+            onChange={(e) => setThink(e.target.checked)}
+          />
+          think
+        </label>
         <button disabled={loading} className="px-4 border rounded">
           {loading ? "…" : "Send"}
         </button>
       </form>
+      {thinkingText && (
+        <details open className="p-3 border rounded text-gray-500 text-sm">
+          <summary>thinking (summary)</summary>
+          <p className="whitespace-pre-wrap">{thinkingText}</p>
+        </details>
+      )}
       <p className="whitespace-pre-wrap">{answer}</p>
       {error && <p className="text-red-600">{error}</p>}
       {info && (
         <dl className="gap-x-4 grid grid-cols-2 p-3 border rounded font-mono text-sm">
           <dt>model</dt> <dd>{info.model}</dd>
+          <dt>prompt_version</dt> <dd>{info.prompt_version}</dd>
           <dt>stop_reason</dt> <dd>{info.stop_reason}</dd>
           <dt>input tokens</dt> <dd>{info.usage.input_tokens}</dd>
           <dt>output tokens</dt>
           <dd>{info.usage.output_tokens}</dd>
+          <dt>thinking</dt> <dd>{info.thinking_mode}</dd>
+          <dt>thinking tokens</dt> <dd>{info.thinking_tokens}</dd>
         </dl>
       )}
     </main>
