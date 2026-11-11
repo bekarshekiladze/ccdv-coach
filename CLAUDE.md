@@ -56,12 +56,14 @@ Restarted from Day 1 on 2026-11-05. The first run (Days 1–5, scripts only) is 
 - Windows: a Node `Assertion failed … UV_HANDLE_CLOSING` message after a crash is harmless.
 
 ## Progress
-_Last updated 2026-11-05. Update at the end of every day._
+_Last updated 2026-11-11. Update at the end of every day._
 
 | Day | State |
 |---|---|
 | 0 | done: Next.js starter, SDK + zod + dotenv + tsx, `labs/package.json`, docs |
-| 1 | next: Foundations, Step 1, and the first streaming chat (`docs/AGENDA.md`) |
-| 2–13 | not started |
+| 1 | done (merged): Foundations, Step 1a–1d + extras, the first streaming chat (`/coach` over SSE, Inspector: model, stop_reason, tokens) |
+| 2 | done (merged): Labs 3a/3b (prompt-only vs native JSON + Zod, `extra-repeats.ts` 10× harness with `--native`), Lab 10 thinking (off/low/high effort), App: `core/schemas/flashcard.ts`, versioned prompts (`prompts/v1/coach.md`, `deck.md`) + loader, `/practice` v0 (native JSON, stop/parse/Zod checks), coach thinking toggle (adaptive + summarized, effort high; Inspector: prompt version, thinking mode and tokens). Quiz weak spots: HTTP status vs content checks, `import type` and `server-only` |
+| 3 | next: Tools, schemas and streaming, Step 2a–2b + 3c, the agent in the chat (`docs/AGENDA.md`) |
+| 4–13 | not started |
 
 - **Exam date:** not recorded yet.

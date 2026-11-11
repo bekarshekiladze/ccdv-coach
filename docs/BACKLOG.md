@@ -5,6 +5,7 @@ Work that didn't fit its day, plus project items. Weekend catch-up comes from he
 ## Project
 - [ ] Record the exam date in `CLAUDE.md` → Progress.
 - [ ] If days keep running well over 3 hours, decide: stretch the schedule, or move the app blocks to weekends.
+- [ ] Before the first deploy: the prompt loader reads `src/core/prompts/**/*.md` with `fs` at runtime, so add them to the server trace with `outputFileTracingIncludes` in `next.config.ts` (Next docs: `output.md`). Check with `npm run build`.
 
 ## Spilled over from a day
 _(none yet)_
