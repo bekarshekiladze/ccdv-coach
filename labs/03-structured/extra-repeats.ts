@@ -51,7 +51,7 @@ const runOnce = async (): Promise<{
   const result = NATIVE
     ? DeckResponse.safeParse(parsed)
     : Deck.safeParse(parsed);
-    
+
   if (!result.success) {
     return {
       outcome: "zod",
@@ -88,7 +88,11 @@ console.log("Output token range:", Math.min(...tokens), Math.max(...tokens));
 
 // 4. Ten runs (wrap Steps 4–7 in a loop): how many JSON.parse failures and how many Zod failures out of 10? You'll compare this number with 3b.
 // seen: or regular run, (no artificial constraints), 10/10 ok runs.
-
 // seen: with "system" prompt commented out, 10/10 parse failures (JSON.parse fails every time).
-
 // seen: with example line deleted, it was 10/10 okay runs.
+
+// 5. Native JSON, 10 runs (`--native`, no system line): tally (ok / parse / zod / cut) and output token range?
+// Seen: Tally: { ok: 10, parse: 0, zod: 0, cut: 0 }; Output token range: 304 562
+
+// 6. Compare with 3a without the system line (10/10 parse failures): what made the difference, and did any run come back non-ok?
+// Seen: 10/10 ok (native) vs 10/10 parse failures (3a). Same prompt, and neither had a format instruction, so the only difference is output_config.format: the API generates within the schema, so the text is always parseable JSON, with nothing around it to break JSON.parse. Zod also passed 10/10, so the min/enum hints in the descriptions were followed too. No run came back non-ok.

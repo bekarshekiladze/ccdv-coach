@@ -97,3 +97,9 @@ export async function POST(req: Request) {
 
 // 3. Stop the dev server mid-answer (Ctrl+C while it's streaming; use a long prompt so you have time). What happens to the half answer on screen? Does an error appear, and which part of the page code catches it? Is anything saved?
 // - The first half is shown on the screen. appears "network error" red error text. it would be catched by trycatch block in page.tsx, where reader tries to read from the stream and fails. Nothing is saved in the Inspector since the "done" event never arrives.
+
+// 4. budget_tokens on Haiku 5.5: thinking { type: "enabled", budget_tokens: 1024 }, think on. HTTP status in DevTools → Network, the status and message on the page, and which page code path showed it (!res.ok or the "error" event)?
+// Seen: In the browser, chat returns error 400. In network tab, its still 200. The error event carries status 400 and the message from the server. The message is unformatted, but it reads as "thinking type enabled is not supported for this model (Haiku 5.5), Use thinking type adaptive and output_config.effort to control thinking behavior"
+
+// 5. Think on + max_tokens: 300, the Alice/Bob puzzle from Lab 10. stop_reason, thinking tokens vs output tokens, and how much of the thinking box and of the answer appeared? Did the stream end with done or error?
+// Seen: stop reason obviously is max_tokens. Only the thinking text was displayed. It showed only part of the answer where tokens were enough for the model to generate. It was ended with "done".
