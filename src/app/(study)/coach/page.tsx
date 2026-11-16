@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Usage = { input_tokens: number; output_tokens: number };
 type DoneInfo = {
@@ -8,8 +8,18 @@ type DoneInfo = {
   prompt_version: string;
   stop_reason: string | null;
   usage: Usage;
+  turns: number;
   thinking_mode: string;
   thinking_tokens: number;
+};
+// One tool call, filled in two steps: "tool_use" creates it, "tool_result" completes it.
+type ToolCall = {
+  id: string;
+  name: string;
+  risk: string | null;
+  input: unknown;
+  output?: string;
+  is_error?: boolean;
 };
 
 const CoachPage = () => {
@@ -20,6 +30,9 @@ const CoachPage = () => {
   const [loading, setLoading] = useState(false);
   const [think, setThink] = useState(false);
   const [thinkingText, setThinkingText] = useState(""); // the thinking summary so far
+  const [toolCalls, setToolCalls] = useState<ToolCall[]>([]); // filled by tool_use / tool_result
+  const [stopped, setStopped] = useState(false); // true after Stop
+  const abortRef = useRef<AbortController | null>(null); // lets Stop cancel the running fetch
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +41,11 @@ const CoachPage = () => {
     setError(null);
     setLoading(true);
     setThinkingText("");
+    setToolCalls([]);
+    setStopped(false);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const res = await fetch("/api/chat", {
@@ -36,6 +54,7 @@ const CoachPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ message: input, think }),
+        signal: controller.signal, // abort() closes the connection; the server notices
       });
 
       if (!res.ok) {
@@ -69,9 +88,14 @@ const CoachPage = () => {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (controller.signal.aborted) {
+        setStopped(true); // Stop isn't an error
+      } else {
+        setError(err instanceof Error ? err.message : String(err));
+      }
     } finally {
       setLoading(false);
+      abortRef.current = null;
     }
   }
 
@@ -82,6 +106,20 @@ const CoachPage = () => {
     } else if (event === "thinking") {
       const { delta } = data as { delta: string };
       setThinkingText((prev) => prev + delta);
+    } else if (event === "tool_use") {
+      const { id, name, risk, input } = data as ToolCall;
+      setToolCalls((prev) => [...prev, { id, name, risk, input }]);
+    } else if (event === "tool_result") {
+      const { id, output, is_error } = data as {
+        id: string;
+        output: string;
+        is_error: boolean;
+      };
+      setToolCalls((prev) =>
+        prev.map((call) =>
+          call.id === id ? { ...call, output, is_error } : call,
+        ),
+      );
     } else if (event === "done") {
       setInfo(data as DoneInfo);
     } else if (event === "error") {
@@ -127,6 +165,15 @@ const CoachPage = () => {
         <button disabled={loading} className="px-4 border rounded">
           {loading ? "…" : "Send"}
         </button>
+        {loading && (
+          <button
+            type="button" // not a submit button: clicking Stop never sends the form
+            onClick={() => abortRef.current?.abort()}
+            className="px-4 border rounded"
+          >
+            Stop
+          </button>
+        )}
       </form>
       {thinkingText && (
         <details open className="p-3 border rounded text-gray-500 text-sm">
@@ -134,19 +181,56 @@ const CoachPage = () => {
           <p className="whitespace-pre-wrap">{thinkingText}</p>
         </details>
       )}
+      {toolCalls.map((call) => (
+        <div
+          key={call.id}
+          className="flex gap-2 px-3 py-2 border rounded font-mono text-sm"
+        >
+          <span className="font-semibold">{call.name}</span>
+          <span className="text-gray-500">{call.risk ?? "unknown"}</span>
+          <span className={call.is_error ? "text-red-600" : "text-gray-500"}>
+            {call.output === undefined
+              ? "running…"
+              : call.is_error
+                ? "error"
+                : "done"}
+          </span>
+        </div>
+      ))}
       <p className="whitespace-pre-wrap">{answer}</p>
+      {stopped && (
+        <p className="text-gray-500 text-sm">
+          Stopped. The server dropped this turn.
+        </p>
+      )}
       {error && <p className="text-red-600">{error}</p>}
       {info && (
         <dl className="gap-x-4 grid grid-cols-2 p-3 border rounded font-mono text-sm">
           <dt>model</dt> <dd>{info.model}</dd>
           <dt>prompt_version</dt> <dd>{info.prompt_version}</dd>
           <dt>stop_reason</dt> <dd>{info.stop_reason}</dd>
+          <dt>turns</dt> <dd>{info.turns}</dd>
           <dt>input tokens</dt> <dd>{info.usage.input_tokens}</dd>
           <dt>output tokens</dt>
           <dd>{info.usage.output_tokens}</dd>
           <dt>thinking</dt> <dd>{info.thinking_mode}</dd>
           <dt>thinking tokens</dt> <dd>{info.thinking_tokens}</dd>
         </dl>
+      )}
+      {toolCalls.length > 0 && (
+        <details open className="p-3 border rounded font-mono text-sm">
+          <summary>tool calls ({toolCalls.length})</summary>
+          {toolCalls.map((call) => (
+            <div key={call.id} className="mt-2">
+              <p>
+                {call.name}({JSON.stringify(call.input)})
+              </p>
+              <p className={call.is_error ? "text-red-600" : "text-gray-500"}>
+                → {call.output ?? "…"}
+              </p>
+            </div>
+          ))}
+        </details>
       )}
     </main>
   );

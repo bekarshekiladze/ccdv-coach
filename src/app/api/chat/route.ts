@@ -1,4 +1,4 @@
-import { APIError, client, loadPrompt, MODEL } from "@/server";
+import { APIError, client, loadPrompt, MODEL, runCoachAgent } from "@/server";
 
 // - Return: new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } }).
 // - Imports come from @/server, never straight from core.
@@ -26,46 +26,51 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       const send = (event: string, data: unknown) => {
-        controller.enqueue(
-          encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
-        );
+        try {
+          controller.enqueue(
+            encoder.encode(
+              `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
+            ),
+          );
+        } catch {
+          // the browser is gone (Stop or a dropped connection): nobody to send to
+        }
       };
 
       // claude streams call
       try {
-        const claude = client.messages.stream({
-          model: MODEL,
-          max_tokens: isThinkingEnabled ? 8000 : 2048,
-          system: prompt.text,
-          thinking,
-          output_config: { effort },
+        const agent = runCoachAgent({
+          params: {
+            system: prompt.text,
+            max_tokens: isThinkingEnabled ? 8000 : 2048,
+            thinking,
+            output_config: { effort },
+          },
           messages: [{ role: "user", content: message }],
+          signal: req.signal, // Stop closes the connection, which aborts the Claude call
         });
 
-        // Pass each piece of text on to the browser as it arrives.
-        claude.on("text", (delta) => {
-          send("text", { delta });
-        });
-
-        claude.on("thinking", (delta) => {
-          send("thinking", { delta });
-        });
-
-        //  Wait for the end, then send the Inspector data.
-        const final = await claude.finalMessage();
-
-        send("done", {
-          model: final.model,
-          stop_reason: final.stop_reason,
-          usage: final.usage,
-          prompt_version: prompt.id,
-          thinking_mode: isThinkingEnabled
-            ? "adaptive · high"
-            : "disabled · medium",
-          thinking_tokens:
-            final.usage.output_tokens_details?.thinking_tokens ?? 0,
-        });
+        // Each loop event becomes one SSE event; "done" also carries the Inspector data.
+        for await (const event of agent) {
+          if (event.type === "done") {
+            send("done", {
+              model: event.model,
+              stop_reason: event.stop_reason,
+              usage: event.usage,
+              turns: event.turns,
+              prompt_version: prompt.id,
+              thinking_mode: isThinkingEnabled
+                ? "adaptive · high"
+                : "disabled · medium",
+              thinking_tokens: event.usage.thinking_tokens,
+            });
+          } else {
+            send(event.type, event);
+          }
+        }
       } catch (error) {
+        if (req.signal.aborted) return; // Stop: not an error, and the partial turn is dropped
+        console.error(error);
         // The 200 is already sent, so the error travels as an event.
         send(
           "error",
@@ -74,7 +79,11 @@ export async function POST(req: Request) {
             : { status: 500, message: "Unexpected server error occurred" },
         );
       } finally {
-        controller.close(); // Always end the response, success or error.
+        try {
+          controller.close(); // Always end the response, success or error.
+        } catch {
+          // already closed by the disconnect
+        }
       }
     },
   });

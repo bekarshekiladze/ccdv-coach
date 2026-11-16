@@ -68,3 +68,35 @@ Decision rules ("use X when…, not Y") from each day of this run. Scenario ques
   seen: claude-haiku-5-5, 2026-11-10, Lab 10 `off + max` → 400.
 - Rule: with thinking on, size `max_tokens` for thinking + answer. Thinking spends the budget first, and a cut-off answer still ends with `done`, so check `stop_reason`.
   seen: claude-haiku-5-5, 2026-11-11, coach, think on, `max_tokens: 300`, Alice/Bob puzzle → stop_reason max_tokens, thinking shown, answer cut, stream ended with done.
+
+## Day 3: Tools, schemas and streaming
+
+### Tools and the agentic loop (Lab 2a–2b)
+
+- Rule: loop while `stop_reason === "tool_use"` and stop on anything else, with a turn cap. Don't hard-code how many calls a task takes; Claude decides that.
+  seen: claude-haiku-5-5, 2026-11-12, 2a–2b "remember… then tell me": 3 turns (save → search → answer), turn 1 blocks thinking,tool_use, last turn end_turn.
+- Rule: send every `tool_result` in the very next user message, all results in one message and before any text. A `tool_use` without its result is a 400; splitting results discourages parallel calls.
+- Rule: let Claude make parallel calls for independent work, not `disable_parallel_tool_use`. Each extra turn resends the whole transcript.
+  seen: claude-haiku-5-5, 2026-11-12, save + search task: parallel → 2 turns, in=1351 / out=134; `disable_parallel_tool_use` → 3 turns, in=1967 / out=135 (+46% input).
+- Rule: report a tool failure as a `tool_result` with `is_error: true` and a readable message, not a crash. Claude reads it and explains or recovers.
+  seen: claude-haiku-5-5, 2026-11-16, search_notes throwing "Notes database is offline.": no retry, the answer reported the failure.
+- Rule: write tool descriptions that say what it does, when to use it and when not to. The name helps too, but the description is the main signal.
+  seen: claude-haiku-5-5, 2026-11-16, "When is my exam?" with a saved note and the clear description: search_notes on turn 1, correct answer.
+- Rule: keep `tool_choice` on `auto` in an agent loop, not `any`/`tool` on every turn. A forced call means every reply ends with `tool_use`, so only the turn cap stops it. Force only the first turn (`turn === 1 ? forced : auto`).
+- Rule: after `tool_choice: none`, handle an empty answer, not just `stop_reason`.
+  seen: claude-haiku-5-5, 2026-11-16, "When is my exam?" with `none`: 1 turn, end_turn, only a thinking block, so the final text was an empty string.
+
+### Forced tool and strict (Lab 3c)
+
+- Rule: on Haiku 5.5, use a forced tool for structured output when you don't need reasoning, not when you do. A forced `tool_choice` skips thinking (Opus 5.5 / Sonnet 5.5 reject it with a 400).
+  seen: claude-haiku-5-5, 2026-11-12, 3c: only a tool_use block, no thinking or text; out=162/220 vs 3b's 364/522, in=765 vs 574 (the tool definition counts as input).
+- Rule: `strict: true` guarantees the shape of `tool_use.input` (already an object, no `JSON.parse`), not your rules. Keep Zod or checks in code for lengths, counts and empty strings; strict mode doesn't support `minLength`/`minimum`.
+  seen: claude-haiku-5-5, 2026-11-12, 3c: `typeof call.input` → "object", Zod passed.
+
+### The agent in the app
+
+- Rule: push the assistant turn only after `finalMessage()`, not while streaming. Stop or a dropped connection throws before that line, so a partial turn never enters history; tool side effects that already ran don't roll back.
+  seen: claude-haiku-5-5, 2026-11-16, coach: Stop mid-answer → half answer kept on screen, "Stopped" shown, no server error.
+- Rule: check `signal.aborted` before `instanceof APIError` in a catch. `APIUserAbortError` extends `APIError`, so an abort would otherwise be handled as an API error.
+- Rule: generate a tool's `input_schema` from its Zod schema (`z.toJSONSchema`, then delete `$schema`), not by hand, so the two can't drift.
+  seen: zod 4, 2026-11-12, local check (no API call): the generated schemas matched the hand-written 2a–2b ones exactly.

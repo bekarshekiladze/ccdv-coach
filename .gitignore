@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# local data: notes now, memory later
+/data/
+
 # production
 /build
 

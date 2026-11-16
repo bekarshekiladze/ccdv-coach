@@ -51,19 +51,19 @@ Course 2: Orientation, Prompting Craft, Extended Thinking (~40 min)
 
 ## Day 3: Tools, schemas and streaming
 Course 2: Tool-use and Schema Design, Streaming Responses (~45 min)
-- [ ] **5 min · Preview:** Step 2 and Step 3c
-- [ ] **45 min · Read:** Tool-use and Schema Design → Streaming Responses
-- [ ] **50 min · Lab, Step 2a–2b:** `labs/02-tools/2a-2b-loop.ts`, two strict tools and the agentic loop with a turn cap
-- [ ] **20 min · Lab, Step 3c:** `labs/03-structured/3c-forced-tool.ts`, a forced tool + `strict: true`
-- [ ] **15 min · Lesson extras:** parallel tool calls; `disable_parallel_tool_use`; a dropped stream is never saved
-- [ ] **45 min · App, the agent in the chat:**
+- [x] **5 min · Preview:** Step 2 and Step 3c
+- [x] **45 min · Read:** Tool-use and Schema Design → Streaming Responses
+- [x] **50 min · Lab, Step 2a–2b:** `labs/02-tools/2a-2b-loop.ts`, two strict tools and the agentic loop with a turn cap
+- [x] **20 min · Lab, Step 3c:** `labs/03-structured/3c-forced-tool.ts`, a forced tool + `strict: true`
+- [x] **15 min · Lesson extras:** parallel tool calls; `disable_parallel_tool_use`; a dropped stream is never saved
+- [x] **45 min · App, the agent in the chat:**
   - `src/core/study/notes.ts`: a notes store per user (a JSON file under `data/`; add `data/` to `.gitignore`)
   - `src/core/tools/`: `save_note` and `search_notes` (strict), each with a risk level (read or write)
   - `src/core/agent/loop.ts`: the Step 2 loop as an async generator of events (`text`, `tool_use`, `tool_result`, `done`)
   - Coach shows tool-call cards. A Stop button aborts the stream, and the partial turn is not saved. **Inspector:** each tool call with its input and output.
   - Notes page v0 (`/notes`): list and search
-- [ ] **10 min · Predict & break:** vague vs clear descriptions; a tool that throws; `tool_choice` force/none
-- [ ] **5 min · Check**
+- [x] **10 min · Predict & break:** vague vs clear descriptions; a tool that throws; `tool_choice` force/none
+- [x] **5 min · Check**
 
 ## Day 4: Context engineering and agent construction
 Course 2: Context Engineering, Agent Construction (~45 min)
