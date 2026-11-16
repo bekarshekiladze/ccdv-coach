@@ -62,8 +62,8 @@ Course 2: Tool-use and Schema Design, Streaming Responses (~45 min)
   - `src/core/agent/loop.ts`: the Step 2 loop as an async generator of events (`text`, `tool_use`, `tool_result`, `done`)
   - Coach shows tool-call cards. A Stop button aborts the stream, and the partial turn is not saved. **Inspector:** each tool call with its input and output.
   - Notes page v0 (`/notes`): list and search
-- [ ] **10 min · Predict & break:** vague vs clear descriptions; a tool that throws; `tool_choice` force/none
-- [ ] **5 min · Check**
+- [x] **10 min · Predict & break:** vague vs clear descriptions; a tool that throws; `tool_choice` force/none
+- [x] **5 min · Check**
 
 ## Day 4: Context engineering and agent construction
 Course 2: Context Engineering, Agent Construction (~45 min)

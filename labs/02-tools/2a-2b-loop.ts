@@ -160,7 +160,7 @@ async function agent(userText: string): Promise<string> {
 
 // The run. This task needs both tools, in order: save first, then search for what was saved.
 const answer = await agent(
-  "Save a note that Lab 3c is done, and search my notes for 'exam'.",
+  "Remember that my exam is in December, then tell me what notes mention 'exam'.",
 );
 console.log("\nFinal answer:\n" + answer);
 // ① after the run: proof that a tool really changed the world
@@ -186,3 +186,16 @@ console.log("Notes store:", notes);
 
 // 5. The same task + tool_choice: { type: "auto", disable_parallel_tool_use: true } (temporary). How many tool_use blocks per turn now, how many turns in total, and the in= of each turn?
 // Seen: now is single tool_use per turn, so save_note and search_notes are in separate turns. 1:in=584 out=53; 2:659 out=49 3:in=724 out=33
+
+// Predict & break (setup: line 15 starts with one saved note, line 163 asks "When is my exam?")
+// 6. Run as is (clear description), then with the search_notes description → "Searches notes." (temporary). Did Claude call search_notes each time, how many turns, and was the answer right?
+// Seen: Claude searched it on first turn, found the note about the exam, and the answer was correct.
+
+// 7. First line of the search_notes branch in runTool → throw new Error("Notes database is offline."); (temporary). What did the ✗ line show, did Claude retry, how many turns, and what did the final answer say?
+// Seen: The ✗ line showed "Notes database is offline." didnt retry, and the final answer indicated the failure to access the notes database.
+
+// 8a. Line 105 → tool_choice: { type: "tool", name: "search_notes" }, (temporary). How many turns, which blocks per turn, and how did the run end?
+// Seen: 2 turns, tool_use and text blocks each turn.
+
+// 8b. The same line → tool_choice: { type: "none" }, (temporary). Any tool_use blocks? What did the answer say?
+// Seen: There is only one turns with reason=end_turn. block=thinking. final answer empty string.
