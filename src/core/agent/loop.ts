@@ -19,6 +19,8 @@ export type AgentEvent =
     }
   // same id as its tool_use, so the UI knows which card to fill in
   | { type: "tool_result"; id: string; output: string; is_error: boolean }
+  // what this turn's call sends, counted before it runs
+  | { type: "context"; turn: number; tokens: number }
   | {
       type: "done";
       model: string;
@@ -60,6 +62,10 @@ export async function* runAgent(
   };
 
   for (let turn = 1; turn <= maxTurns; turn++) {
+    const definitions = tools.map((t) => t.definition);
+    // With thinking on, earlier turns must stay exactly as sent: Haiku 5.5 binds each thinking
+    // block to everything before it, so a pruned history would come back as a 400
+
     const stream = client.messages.stream(
       { ...params, model, tools: tools.map((t) => t.definition), messages },
       { signal },

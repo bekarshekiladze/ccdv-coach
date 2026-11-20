@@ -67,10 +67,10 @@ Course 2: Tool-use and Schema Design, Streaming Responses (~45 min)
 
 ## Day 4: Context engineering and agent construction
 Course 2: Context Engineering, Agent Construction (~45 min)
-- [ ] **5 min · Preview:** Steps 8a–8d and 7a–7b
-- [ ] **45 min · Read:** Context Engineering → Agent Construction
-- [ ] **45 min · Lab, Steps 8a–8d:** `labs/08-context/8a-8d-context.ts`: measure tokens, prune, compact, isolate (seed about 30 realistic notes)
-- [ ] **25 min · Lab, Steps 7a–7b:** `labs/07-agents/7a-7b-workflow.ts`, the same task as a workflow and as an agent
+- [x] **5 min · Preview:** Steps 8a–8d and 7a–7b
+- [x] **45 min · Read:** Context Engineering → Agent Construction
+- [x] **45 min · Lab, Steps 8a–8d:** `labs/08-context/8a-8d-context.ts`: measure tokens, prune, compact, isolate (seed about 30 realistic notes)
+- [x] **25 min · Lab, Steps 7a–7b:** `labs/07-agents/7a-7b-workflow.ts`, the same task as a workflow and as an agent
 - [ ] **45 min · App, context and routing:**
   - `src/core/context/`: count tokens before each call, and prune old tool results. **Inspector:** the context size.
   - `src/core/agent/router.ts`: classify each message (note / question / quiz / other). Fixed handlers take the predictable requests, the agent the open-ended ones. **Inspector:** the route taken.

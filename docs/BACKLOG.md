@@ -8,7 +8,7 @@ Work that didn't fit its day, plus project items. Weekend catch-up comes from he
 - [ ] Before the first deploy: the prompt loader reads `src/core/prompts/**/*.md` with `fs` at runtime, so add them to the server trace with `outputFileTracingIncludes` in `next.config.ts` (Next docs: `output.md`). Check with `npm run build`.
 
 ## Spilled over from a day
-_(none yet)_
+- [ ] **Day 4 · Practice: spaced-repetition review of saved cards** (plain code, no Claude: a workflow decision). Blocked: `/practice` generates decks but saves no cards, so a card store comes first.
 
 ## After the course (ROADMAP levels 2–3)
 - [ ] The Labs page in the app (run lab variants from the UI)
